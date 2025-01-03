@@ -48,7 +48,7 @@ module.exports = async (req, res) => {
         entries.forEach(entry => {
             try {
                 // Check if trade has necessary properties
-                if (!entry.properties["Exit Date"]?.date || !entry.properties["P&L"]?.formula.number) {
+                if (!entry.properties["Exit Date"]?.date || !entry.properties["P&L"]?.formula) {
                     return;
                 }
                 
