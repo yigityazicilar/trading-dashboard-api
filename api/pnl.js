@@ -6,10 +6,6 @@ module.exports = async (req, res) => {
     res.setHeader('Access-Control-Allow-Methods', 'GET');
     
     try {
-        // Log environment variables (excluding sensitive parts)
-        console.log('Database ID exists:', !!process.env.NOTION_DATABASE_ID);
-        console.log('Token exists:', !!process.env.NOTION_TOKEN);
-
         if (!process.env.NOTION_TOKEN || !process.env.NOTION_DATABASE_ID) {
             throw new Error('Missing environment variables');
         }
@@ -41,21 +37,19 @@ module.exports = async (req, res) => {
             // Process entries
             response.results.forEach(entry => {
                 try {
-                    console.log(entry.properties["Date"])
-                    console.log(entry.properties["P&L"])
-                    if (!entry.properties.Date?.date || !entry.properties['P&L']?.number) {
+                    if (!entry.properties["Date"]?.date || !entry.properties['P&L']?.rollup) {
                         console.log('Skipping entry due to missing data');
                         return;
                     }
                     
-                    const entryDate = new Date(entry.properties.Date.date.start);
-                    const pnl = entry.properties['P&L'].number;
+                    const entryDate = new Date(entry.properties["Date"].date.start);
+                    const pnl = entry.properties['P&L'].rollup.number;
                     const daysDiff = Math.floor((today - entryDate) / (1000 * 60 * 60 * 24));
 
                     pnlData.total += pnl;
                     if (daysDiff === 0) pnlData.today += pnl;
-                    if (daysDiff <= 7) pnlData.week += pnl;
-                    if (daysDiff <= 30) pnlData.month += pnl;
+                    if (daysDiff < 7) pnlData.week += pnl;
+                    if (daysDiff < 30) pnlData.month += pnl;
                 } catch (entryError) {
                     console.error('Error processing entry:', entryError);
                 }

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>P&L Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <style>
+        body { 
+            background: #1a1a1a;
+            margin: 0;
+            padding: 0;
+        }
+        .pnl-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 0.75rem;
+        }
+        .pnl-box {
+            background: #2d2d2d;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            border: 1px solid #3d3d3d;
+        }
+        .label {
+            color: #999;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        .value {
+            color: #fff;
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-top: 0.25rem;
+        }
+        .positive { color: #34d399; }
+        .negative { color: #f87171; }
+        .zero { color: #fff; }
+    </style>
+</head>
+<body>
+    <div class="pnl-grid">
+        <div class="pnl-box">
+            <div class="label">Today</div>
+            <div class="value pnl-today">-</div>
+        </div>
+
+        <div class="pnl-box">
+            <div class="label">7 Days</div>
+            <div class="value pnl-week">-</div>
+        </div>
+
+        <div class="pnl-box">
+            <div class="label">30 Days</div>
+            <div class="value pnl-month">-</div>
+        </div>
+
+        <div class="pnl-box">
+            <div class="label">Total</div>
+            <div class="value pnl-total">-</div>
+        </div>
+    </div>
+
+    <script>
+        function formatCurrency(number) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            }).format(number);
+        }
+
+        function updatePnLDisplay(data) {
+            const elements = {
+                today: document.querySelector('.pnl-today'),
+                week: document.querySelector('.pnl-week'),
+                month: document.querySelector('.pnl-month'),
+                total: document.querySelector('.pnl-total')
+            };
+
+            Object.entries(data).forEach(([key, value]) => {
+                const element = elements[key];
+                if (element) {
+                    element.textContent = formatCurrency(value);
+                    element.classList.remove('positive', 'negative', 'zero');
+                    element.classList.add(value > 0 ? 'positive' : value < 0 ? 'negative' : 'zero');
+                }
+            });
+        }
+
+        async function fetchPnLData() {
+            try {
+                const response = await fetch('/api/pnl');
+                const data = await response.json();
+                updatePnLDisplay(data);
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        fetchPnLData();
+        setInterval(fetchPnLData, 60000);
+    </script>
+</body>
+</html>
