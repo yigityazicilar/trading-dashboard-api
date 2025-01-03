@@ -41,7 +41,8 @@ module.exports = async (req, res) => {
             // Process entries
             response.results.forEach(entry => {
                 try {
-                    console.log(entry)
+                    console.log(entry.properties["Date"])
+                    console.log(entry.properties["P&L"])
                     if (!entry.properties.Date?.date || !entry.properties['P&L']?.number) {
                         console.log('Skipping entry due to missing data');
                         return;
