@@ -47,16 +47,14 @@ module.exports = async (req, res) => {
         // Process each trade
         entries.forEach(entry => {
             try {
-                console.log(entry.properties["P&L"])
-
                 // Check if trade has necessary properties
-                if (!entry.properties["Exit Date"]?.date || !entry.properties["P&L"]?.number) {
+                if (!entry.properties["Exit Date"]?.date || !entry.properties["P&L"]?.formula.number) {
                     return;
                 }
                 
                 const exitDate = new Date(entry.properties["Exit Date"].date.start);
                 exitDate.setHours(0, 0, 0, 0); // Normalize to start of day
-                const pnl = entry.properties["P&L"].number;
+                const pnl = entry.properties["P&L"].formula.number;
                 const daysDiff = Math.floor((today - exitDate) / (1000 * 60 * 60 * 24));
 
                 // Add to total
