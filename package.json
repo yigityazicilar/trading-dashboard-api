@@ -1,0 +1,23 @@
+{
+  "name": "trading-dashboard-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yigityazicilar/trading-dashboard-api.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/yigityazicilar/trading-dashboard-api/issues"
+  },
+  "homepage": "https://github.com/yigityazicilar/trading-dashboard-api#readme",
+  "dependencies": {
+    "@notionhq/client": "^2.2.15"
+  }
+}
