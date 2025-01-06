@@ -80,6 +80,19 @@ module.exports = async (req, res) => {
             pnlData[key] = Math.round(pnlData[key] * 100) / 100;
         });
 
+        const firstTrade = await notion.databases.query({
+            database_id: process.env.NOTION_DATABASE_ID,
+            sorts: [
+                {
+                    property: 'Entry Date',
+                    direction: 'ascending'
+                }
+            ],
+            page_size: 1
+        });
+
+        pnlData["firstTradeDate"] = firstTrade.results[0]?.properties['Entry Date']?.date?.start
+
         res.status(200).json(pnlData);
     } catch (error) {
         console.error('Error details:', error);

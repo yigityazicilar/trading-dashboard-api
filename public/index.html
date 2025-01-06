@@ -63,6 +63,11 @@
             <div class="label">Total</div>
             <div class="value pnl-total">-</div>
         </div>
+
+        <div class="pnl-box" style="grid-column: span 2;">
+            <div class="label">Daily Average</div>
+            <div class="value pnl-daily">-</div>
+        </div>
     </div>
 
     <script>
@@ -80,9 +85,11 @@
                 today: document.querySelector('.pnl-today'),
                 week: document.querySelector('.pnl-week'),
                 month: document.querySelector('.pnl-month'),
-                total: document.querySelector('.pnl-total')
+                total: document.querySelector('.pnl-total'),
+                daily: document.querySelector('.pnl-daily')
             };
 
+            // Update standard P&L values
             Object.entries(data).forEach(([key, value]) => {
                 const element = elements[key];
                 if (element) {
@@ -91,6 +98,16 @@
                     element.classList.add(value > 0 ? 'positive' : value < 0 ? 'negative' : 'zero');
                 }
             });
+
+            // Calculate and update daily average
+            const startDate = new Date(data.firstTradeDate);
+            const now = new Date();
+            const daysTrading = Math.max(1, Math.ceil((now - startDate) / (1000 * 60 * 60 * 24)));
+            const dailyAverage = data.total / daysTrading;
+
+            elements.daily.textContent = formatCurrency(dailyAverage);
+            elements.daily.classList.remove('positive', 'negative', 'zero');
+            elements.daily.classList.add(dailyAverage > 0 ? 'positive' : dailyAverage < 0 ? 'negative' : 'zero');
         }
 
         async function fetchPnLData() {
